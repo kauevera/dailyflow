@@ -5,25 +5,62 @@
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="application-name" content="Dailyflow">
-    <meta name="mobile-web-app-capable" content="yes">
+    <%= favicon_link_tag 'favicon.png' %>
+    <%= favicon_link_tag 'favicon.png', rel: 'apple-touch-icon', type: 'image/png' %>
     <%= csrf_meta_tags %>
     <%= csp_meta_tag %>
 
     <%= yield :head %>
 
-    <%# Enable PWA manifest for installable apps (make sure to enable in config/routes.rb too!) %>
-    <%#= tag.link rel: "manifest", href: pwa_manifest_path(format: :json) %>
-
     <link rel="icon" href="/icon.png" type="image/png">
-    <link rel="icon" href="/icon.svg" type="image/svg+xml">
-    <link rel="apple-touch-icon" href="/icon.png">
-
-    <%# Includes all stylesheet files in app/assets/stylesheets %>
     <%= stylesheet_link_tag :app, "data-turbo-track": "reload" %>
     <%= javascript_importmap_tags %>
+    
+    <style>
+      /* Estilo rápido para as mensagens de alerta */
+      .flash-message {
+        padding: 1rem;
+        margin: 1rem auto;
+        max-width: 800px;
+        border-radius: 8px;
+        text-align: center;
+        font-weight: bold;
+      }
+      .alert-notice { background-color: #dcfce7; color: #166534; border: 1px solid #bbf7d0; }
+      .alert-alert { background-color: #fee2e2; color: #991b1b; border: 1px solid #fecaca; }
+      
+      nav { background: #6366f1; padding: 1rem; color: white; display: flex; justify-content: space-between; }
+      nav a { color: white; text-decoration: none; font-weight: bold; margin-left: 1rem; }
+    </style>
   </head>
 
   <body>
-    <%= yield %>
+    <nav>
+      <div><strong>DailyFlow</strong></div>
+      <div>
+        <% if logged_in? %>
+          <span>Olá, <%= current_user.nome %></span>
+          <%= link_to "Minhas Tarefas", root_path, class: "nav-item" %>
+          <%= button_to "Sair", logout_path, 
+              method: :delete, 
+              form: { data: { turbo_confirm: "Deseja realmente sair?" } },
+              class: "nav-item", 
+              style: "background: none; border: none; color: var(--text); cursor: pointer; font-family: inherit; font-size: 0.9rem; margin-left: 1.5rem;" %>
+        <% else %>
+          <%= link_to "Entrar", login_path %>
+          <%= link_to "Cadastrar", signup_path %>
+        <% end %>
+      </div>
+    </nav>
+
+    <% flash.each do |type, msg| %>
+      <div class="flash-message alert-<%= type %>">
+        <%= msg %>
+      </div>
+    <% end %>
+
+    <main>
+      <%= yield %>
+    </main>
   </body>
 </html>

@@ -1,0 +1,65 @@
+<div class="container" style="max-width: 900px; margin: 2rem auto; padding: 0 1rem;">
+  
+  <%# Cabeçalho: Título e Botão %>
+  <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
+    <h1 style="color: var(--accent, #6366f1); margin: 0;">Minhas Tarefas</h1>
+    <%= link_to 'Nova Tarefa', new_task_path, class: 'btn-auth', style: 'padding: 0.5rem 1rem; text-decoration: none; width: auto; margin: 0;' %>
+  </div>
+
+  <%# Barra de Pesquisa: Agora dentro do container de centralização %>
+  <div class="search-container">
+    <span class="search-icon"></span>
+    <input type="text" id="task-search" placeholder="Buscar tarefas pelo título..." class="search-input">
+  </div>
+
+  <%# Tabela de Tarefas %>
+  <div class="task-table-container">
+    <table style="width: 100%; border-collapse: collapse; text-align: left;">
+      <thead>
+        <tr>
+          <th style="padding: 1rem;">Status</th>
+          <th style="padding: 1rem;">Título</th>
+          <th style="padding: 1rem;">Categoria</th>
+          <th style="padding: 1rem;">Prioridade</th>
+          <th style="padding: 1rem; text-align: center;">Ações</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% @tasks.each do |task| %>
+          <tr style="border-bottom: 1px solid var(--border, #f1f5f9);">
+            <td style="padding: 1rem; text-align: center;">
+              <%# Correção: class='...' em vez de class: '...' %>
+              <input class="task-status-checkbox" data-task-id="<%= task.id %>" type="checkbox" <%= 'checked' if task.concluida %>>
+            </td>
+            <td class="task-title" style="padding: 1rem; <%= 'text-decoration: line-through; opacity: 0.5;' if task.concluida %>">
+              <strong style="display: block;"><%= task.titulo %></strong>
+              <small style="color: var(--text-muted, #64748b);"><%= task.descricao %></small>
+            </td>
+            <td style="padding: 1rem;">
+              <span style="background: <%= task.category&.cor || '#e2e8f0' %>; color: white; padding: 0.2rem 0.5rem; border-radius: 4px; font-size: 0.75rem;">
+                <%= task.category&.nome || 'Sem Categoria' %>
+              </span>
+            </td>
+            <td style="padding: 1rem;">
+              <span class="priority-badge p-<%= task.prioridade %>">
+                <%= task.prioridade == 3 ? 'Alta' : (task.prioridade == 2 ? 'Média' : 'Baixa') %>
+              </span>
+            </td>
+            <td style="padding: 1rem; text-align: center;">
+              <div style="display: flex; gap: 10px; justify-content: center; align-items: center;">
+                <%= link_to "✏️", edit_task_path(task), title: "Editar", style: "text-decoration: none;" %>
+                <%= button_to task_path(task), 
+                    method: :delete, 
+                    data: { turbo_confirm: "Tem certeza que deseja excluir?" }, 
+                    class: "btn-icon-delete",
+                    style: "background: none; border: none; cursor: pointer; padding: 0; margin: 0; line-height: 1;" do %>
+                  🗑️
+                <% end %>
+              </div>
+            </td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  </div>
+</div>

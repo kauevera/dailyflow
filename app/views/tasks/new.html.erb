@@ -1,0 +1,33 @@
+<div class="auth-container">
+  <div class="auth-header">
+    <h1>Nova Tarefa</h1>
+    <p>O que precisa ser feito hoje?</p>
+  </div>
+
+  <%= form_with model: @task, local: true do |f| %>
+    <div class="form-group">
+      <%= f.label :titulo, "Título" %>
+      <%= f.text_field :titulo, placeholder: "Ex: Estudar Ruby", required: true %>
+    </div>
+
+    <div class="form-group">
+      <%= f.label :descricao, "Descrição" %>
+      <%= f.text_area :descricao, placeholder: "Detalhes da tarefa...", style: "width: 100%; border-radius: 6px; border: 1px solid #e2e8f0; padding: 0.75rem;" %>
+    </div>
+
+    <div class="form-group">
+      <%= f.label :category_id, "Categoria" %>
+      <%= f.collection_select :category_id, @categories, :id, :nome, { prompt: "Selecione uma categoria" }, { style: "width: 100%; padding: 0.75rem; border-radius: 6px;" } %>
+    </div>
+
+    <div class="form-group">
+      <%= f.label :prioridade %>
+      <%= f.select :prioridade, [["Baixa", 1], ["Média", 2], ["Alta", 3]], {}, { style: "width: 100%; padding: 0.75rem; border-radius: 6px;" } %>
+    </div>
+
+    <%= f.submit "Salvar Tarefa", class: "btn-auth" %>
+    <div style="text-align: center; margin-top: 1rem;">
+      <%= link_to "Cancelar", tasks_path, style: "color: #64748b; text-decoration: none; font-size: 0.875rem;" %>
+    </div>
+  <% end %>
+</div>
