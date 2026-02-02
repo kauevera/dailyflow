@@ -20,9 +20,9 @@
   <body>
     <nav data-turbo="false">
       <div><strong>DailyFlow</strong></div>
-      <div>
+      <div class="nav-itens">
         <% if logged_in? %>
-          <span>Olá, <%= current_user.nome %></span>
+          <span class="user-greeting">Olá, <%= current_user.nome %></span>
           <%= link_to "Minhas Tarefas", root_path, class: "nav-item" %>
           <%= button_to "Sair", logout_path, 
               method: :delete, 
@@ -30,8 +30,8 @@
               class: "nav-item", 
               style: "background: none; border: none; color: var(--text); cursor: pointer; font-family: inherit; font-size: 0.9rem; margin-left: 1.5rem;" %>
         <% else %>
-          <%= link_to "Entrar", login_path %>
-          <%= link_to "Cadastrar", signup_path %>
+          <%= link_to "Entrar", login_path, class: "nav-item" %>
+          <%= link_to "Cadastrar", signup_path, class: "nav-item" %>
         <% end %>
       </div>
     </nav>
