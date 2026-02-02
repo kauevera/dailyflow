@@ -41,11 +41,9 @@ class TasksController < ApplicationController
 
     respond_to do |format|
       format.html { redirect_to tasks_path, notice: "Tarefa removida!" }
-      format.js   { render js: "alert('Tarefa removida com sucesso!'); window.location.reload();" }
     end
   end
   
-
   private
 
   def task_params
