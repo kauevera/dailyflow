@@ -1,6 +1,17 @@
-document.addEventListener("turbo:load", () => {
-  console.log("O JavaScript do DailyFlow subiu!");
+const initializeApp = () => {
+  console.log("ok!");
+
   const checkboxes = document.querySelectorAll(".task-status-checkbox");
+  const searchInput = document.getElementById("task-search");
+  const alerts = document.querySelectorAll(".flash-message");
+  
+  // logica de alerta
+  alerts.forEach(alert => {
+    setTimeout(() => {
+      alert.style.opacity = "0";
+      setTimeout(() => alert.remove(), 1000);
+    }, 2000);
+  });  
 
   checkboxes.forEach(checkbox => {
     checkbox.addEventListener("change", (e) => {
@@ -25,8 +36,6 @@ document.addEventListener("turbo:load", () => {
     });
   });
 
-  const searchInput = document.getElementById("task-search");
-  
   if (searchInput) {
     searchInput.addEventListener("keyup", () => {
       const filter = searchInput.value.toLowerCase();
@@ -38,15 +47,6 @@ document.addEventListener("turbo:load", () => {
       });
     });
   }
+};
 
-  const alerts = document.querySelectorAll(".flash-message");
-  
-  alerts.forEach(alert => {
-    setTimeout(() => {
-      alert.style.transition = "opacity 1s ease, transform 1s ease";
-      alert.style.opacity = "0";
-      alert.style.transform = "translateY(-20px)";
-      setTimeout(() => alert.remove(), 1000);
-    }, 4000);
-  });
-});
+document.addEventListener("DOMContentLoaded", initializeApp);
