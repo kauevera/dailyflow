@@ -12,22 +12,27 @@
 
     <div class="form-group">
       <%= f.label :descricao, "Descrição" %>
-      <%= f.text_area :descricao, placeholder: "Detalhes da tarefa...", style: "width: 100%; border-radius: 6px; border: 1px solid #e2e8f0; padding: 0.75rem;" %>
+      <%= f.text_area :descricao, placeholder: "Detalhes da tarefa...", rows: 3 %>
     </div>
 
     <div class="form-group">
       <%= f.label :category_id, "Categoria" %>
-      <%= f.collection_select :category_id, @categories, :id, :nome, { prompt: "Selecione uma categoria" }, { style: "width: 100%; padding: 0.75rem; border-radius: 6px;" } %>
+      <%= f.collection_select :category_id, @categories, :id, :nome, { prompt: "Selecione uma categoria" } %>
     </div>
 
     <div class="form-group">
-      <%= f.label :prioridade %>
-      <%= f.select :prioridade, [["Baixa", 1], ["Média", 2], ["Alta", 3]], {}, { style: "width: 100%; padding: 0.75rem; border-radius: 6px;" } %>
+      <%= f.label :prioridade, "Prioridade" %>
+      <%= f.select :prioridade, [["Baixa", 1], ["Média", 2], ["Alta", 3]] %>
+    </div>
+
+    <div class="form-group">
+      <%= f.label :data_vencimento, "Data de Vencimento" %>
+      <%= f.date_field :data_vencimento %>
     </div>
 
     <%= f.submit "Salvar Tarefa", class: "btn-auth" %>
     <div style="text-align: center; margin-top: 1rem;">
-      <%= link_to "Cancelar", tasks_path, style: "color: #64748b; text-decoration: none; font-size: 0.875rem;" %>
+      <%= link_to "Cancelar", tasks_path, style: "color: var(--text-muted); text-decoration: none; font-size: 0.875rem;" %>
     </div>
   <% end %>
 </div>
