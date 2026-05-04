@@ -1,65 +1,113 @@
-<div class="container" style="max-width: 900px; margin: 2rem auto; padding: 0 1rem;">
-  
+<div class="container" style="max-width: 960px; margin: 2rem auto; padding: 0 1rem;">
+
   <%# Cabeçalho: Título e Botão %>
   <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
-    <h1 style="color: var(--accent, #6366f1); margin: 0;">Minhas Tarefas</h1>
+    <h1 style="color: var(--accent, #a39171); margin: 0;">Minhas Tarefas</h1>
     <%= link_to 'Nova Tarefa', new_task_path, class: 'btn-auth', style: 'padding: 0.5rem 1rem; text-decoration: none; width: auto; margin: 0;' %>
   </div>
 
-  <%# Barra de Pesquisa: Agora dentro do container de centralização %>
+  <%# Barra de Pesquisa %>
   <div class="search-container">
     <span class="search-icon"></span>
     <input type="text" id="task-search" placeholder="Buscar tarefas pelo título..." class="search-input">
   </div>
 
+  <%# Filtros %>
+  <%= form_with url: tasks_path, method: :get, local: true do %>
+    <div class="filter-bar">
+      <%= select_tag :category_id,
+          options_for_select([['Todas as categorias', '']] + @categories.map { |c| [c.nome, c.id] }, params[:category_id]),
+          class: 'filter-select' %>
+
+      <%= select_tag :prioridade,
+          options_for_select([['Todas as prioridades', ''], ['Baixa', 1], ['Média', 2], ['Alta', 3]], params[:prioridade]),
+          class: 'filter-select' %>
+
+      <%= select_tag :status,
+          options_for_select([['Todos os status', ''], ['Pendentes', 'pendente'], ['Concluídas', 'concluida']], params[:status]),
+          class: 'filter-select' %>
+
+      <button type="submit" class="btn-filter">Filtrar</button>
+
+      <% if params[:category_id].present? || params[:prioridade].present? || params[:status].present? %>
+        <%= link_to 'Limpar filtros', tasks_path, class: 'btn-clear' %>
+      <% end %>
+    </div>
+  <% end %>
+
   <%# Tabela de Tarefas %>
   <div class="task-table-container">
-    <table style="width: 100%; border-collapse: collapse; text-align: left;">
+    <table>
       <thead>
         <tr>
-          <th style="padding: 1rem;">Status</th>
-          <th style="padding: 1rem;">Título</th>
-          <th style="padding: 1rem;">Categoria</th>
-          <th style="padding: 1rem;">Prioridade</th>
-          <th style="padding: 1rem; text-align: center;">Ações</th>
+          <th>Status</th>
+          <th>Título</th>
+          <th>Categoria</th>
+          <th>Prioridade</th>
+          <th>Vencimento</th>
+          <th style="text-align: center;">Ações</th>
         </tr>
       </thead>
       <tbody>
-        <% @tasks.each do |task| %>
-          <tr style="border-bottom: 1px solid var(--border, #f1f5f9);">
-            <td style="padding: 1rem; text-align: center;">
-              <%# Correção: class='...' em vez de class: '...' %>
-              <input class="task-status-checkbox" data-task-id="<%= task.id %>" type="checkbox" <%= 'checked' if task.concluida %>>
-            </td>
-            <td class="task-title" style="padding: 1rem; <%= 'text-decoration: line-through; opacity: 0.5;' if task.concluida %>">
-              <strong style="display: block;"><%= task.titulo %></strong>
-              <small style="color: var(--text-muted, #64748b);"><%= task.descricao %></small>
-            </td>
-            <td style="padding: 1rem;">
-              <span style="background: <%= task.category&.cor || '#e2e8f0' %>; color: white; padding: 0.2rem 0.5rem; border-radius: 4px; font-size: 0.75rem;">
-                <%= task.category&.nome || 'Sem Categoria' %>
-              </span>
-            </td>
-            <td style="padding: 1rem;">
-              <span class="priority-badge p-<%= task.prioridade %>">
-                <%= task.prioridade == 3 ? 'Alta' : (task.prioridade == 2 ? 'Média' : 'Baixa') %>
-              </span>
-            </td>
-            <td style="padding: 1rem; text-align: center;">
-              <div style="display: flex; gap: 10px; justify-content: center; align-items: center;">
-                <%= link_to "✏️", edit_task_path(task), title: "Editar", style: "text-decoration: none;" %>
-                <%= button_to task_path(task), 
-                    method: :delete, 
-                    data: { turbo_confirm: "Tem certeza que deseja excluir?" }, 
-                    class: "btn-icon-delete",
-                    style: "background: none; border: none; cursor: pointer; padding: 0; margin: 0; line-height: 1;" do %>
-                  🗑️
-                <% end %>
-              </div>
+        <% if @tasks.empty? %>
+          <tr>
+            <td colspan="6" style="text-align: center; padding: 2rem; color: var(--text-muted);">
+              Nenhuma tarefa encontrada.
             </td>
           </tr>
+        <% else %>
+          <% @tasks.each do |task| %>
+            <tr>
+              <td style="text-align: center;">
+                <input class="task-status-checkbox" data-task-id="<%= task.id %>" type="checkbox" <%= 'checked' if task.concluida %>>
+              </td>
+              <td class="task-title" style="<%= 'text-decoration: line-through; opacity: 0.5;' if task.concluida %>">
+                <strong style="display: block;"><%= task.titulo %></strong>
+                <small style="color: var(--text-muted);"><%= task.descricao %></small>
+              </td>
+              <td>
+                <span style="background: <%= task.category&.cor || '#a39171' %>; color: white; padding: 0.2rem 0.6rem; border-radius: 4px; font-size: 0.75rem;">
+                  <%= task.category&.nome || 'Sem Categoria' %>
+                </span>
+              </td>
+              <td>
+                <span class="priority-badge p-<%= task.prioridade %>">
+                  <%= task.prioridade == 3 ? 'Alta' : (task.prioridade == 2 ? 'Média' : 'Baixa') %>
+                </span>
+              </td>
+              <td>
+                <% if task.data_vencimento.present? %>
+                  <span class="due-date <%= task.data_vencimento < Time.current && !task.concluida ? 'overdue' : '' %>">
+                    <%= task.data_vencimento.strftime('%d/%m/%Y') %>
+                  </span>
+                <% else %>
+                  <span style="color: var(--text-muted); font-size: 0.85rem;">—</span>
+                <% end %>
+              </td>
+              <td style="text-align: center;">
+                <div style="display: flex; gap: 10px; justify-content: center; align-items: center;">
+                  <%= link_to "✏️", edit_task_path(task), title: "Editar", style: "text-decoration: none;" %>
+                  <%= button_to task_path(task),
+                      method: :delete,
+                      data: { turbo_confirm: "Tem certeza que deseja excluir?" },
+                      class: "btn-icon-delete",
+                      style: "background: none; border: none; cursor: pointer; padding: 0; margin: 0; line-height: 1;" do %>
+                    🗑️
+                  <% end %>
+                </div>
+              </td>
+            </tr>
+          <% end %>
         <% end %>
       </tbody>
     </table>
   </div>
+
+  <%# Paginação %>
+  <% if @tasks.total_pages > 1 %>
+    <div class="pagination-container">
+      <%= paginate @tasks %>
+    </div>
+  <% end %>
+
 </div>

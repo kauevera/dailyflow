@@ -2,7 +2,14 @@ class TasksController < ApplicationController
   before_action :require_user
 
   def index
-    @tasks = current_user.tasks.order(created_at: :desc)
+    @categories = current_user.categories
+    tasks = current_user.tasks
+
+    tasks = tasks.where(category_id: params[:category_id]) if params[:category_id].present?
+    tasks = tasks.where(prioridade: params[:prioridade]) if params[:prioridade].present?
+    tasks = tasks.where(concluida: params[:status] == 'concluida') if params[:status].present?
+
+    @tasks = tasks.order(created_at: :desc).page(params[:page]).per(10)
   end
 
   def new
@@ -43,10 +50,10 @@ class TasksController < ApplicationController
       format.html { redirect_to tasks_path, notice: "Tarefa removida!" }
     end
   end
-  
+
   private
 
   def task_params
-    params.require(:task).permit(:titulo, :descricao, :concluida, :prioridade, :category_id)
+    params.require(:task).permit(:titulo, :descricao, :concluida, :prioridade, :category_id, :data_vencimento)
   end
 end
