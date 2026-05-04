@@ -1,20 +1,17 @@
 default: &default
-  adapter: postgresql
-  encoding: unicode
-  host: host-do-banco
-  database: nome-do-banco
-  username: nome-do-usuario
-  password: senha-do-usuario
-  port: 5432
-  sslmode: require
+  adapter: sqlite3
   pool: <%= ENV.fetch("RAILS_MAX_THREADS") { 5 } %>
+  timeout: 5000
 
 development:
   <<: *default
+  database: storage/development.sqlite3
 
 test:
   <<: *default
-  database: todo_list_test
+  database: storage/test.sqlite3
 
 production:
-  <<: *default
+  adapter: postgresql
+  url: <%= ENV["DATABASE_URL"] %>
+  pool: <%= ENV.fetch("RAILS_MAX_THREADS") { 5 } %>
